@@ -10,8 +10,8 @@ local RED = {200, 0, 0}
 local MM_TO_PROCESS = 10 --10mm slices
 
 -- Create the views
-local v2D = View.create('Viewer2D')
-local v3D = View.create('Viewer3D')
+local v2D = View.create()
+local v3D = View.create('Viewer3D1')
 
 local function viewHeightMap()
   -- Load the data
@@ -41,19 +41,20 @@ local function viewHeightMap()
   end
   local frameProfile = Profile.aggregate(profilesToAggregate, 'MEAN')
 
-  v2D:clear()
-  local profileID = v2D:addProfile(frameProfile, helper.getProfileDeco(BLUE))
-  v2D:addText('Profile', helper.getTextDeco(20, 65, 6), nil, profileID)
-  v2D:present()
-
-  Script.sleep(DELAY)
-
   -------------------------------------------------
   -- Fix missing data -----------------------------
   -------------------------------------------------
   frameProfile = frameProfile:blur(7)
   frameProfile = frameProfile:median(3)
   frameProfile:setValidFlagsEnabled(false)
+
+  v2D:clear()
+  local grDec = helper.getProfileDeco(BLUE)
+  local profileID = v2D:addProfile(frameProfile, grDec)
+  v2D:addText('Profile', helper.getTextDeco(20, 65, 6), nil, profileID)
+  v2D:present()
+
+  Script.sleep(DELAY)
 
   --------------------------------------------------
   -- Get the two highest points ------------------
@@ -94,33 +95,32 @@ local function viewHeightMap()
 
   -- Visualization
   v2D:clear()
-  profileID = v2D:addProfile(frameProfile, helper.getProfileDeco(BLUE))
-  v2D:addShape(maxPoint, helper.getDeco(ORANGE, nil, 2), nil, profileID)
-  v2D:addShape(maxPoint2, helper.getDeco(ORANGE, nil, 2), nil, profileID)
-  v2D:addText('Max points', helper.getTextDeco(20, 65, 6), nil, profileID)
+  grDec:setTitle('Max points')
+  v2D:addProfile(frameProfile, grDec)
+  v2D:addShape(maxPoint, helper.getDeco(ORANGE, nil, 2))
+  v2D:addShape(maxPoint2, helper.getDeco(ORANGE, nil, 2))
   v2D:present()
   Script.sleep(DELAY)
 
   v2D:clear()
-  profileID = v2D:addProfile(frameProfile, helper.getProfileDeco(BLUE))
-  v2D:addShape(maxPoint, helper.getDeco(ORANGE, nil, 2), nil, profileID)
-  v2D:addShape(maxPoint2, helper.getDeco(ORANGE, nil, 2), nil, profileID)
-  v2D:addShape(height1Line, helper.getDeco(RED, 0.5), nil, profileID)
-  v2D:addShape(height2Line, helper.getDeco(RED, 0.5), nil, profileID)
-  v2D:addShape(minPoint1, helper.getDeco(ORANGE, nil, 2), nil, profileID)
-  v2D:addShape(minPoint2, helper.getDeco(ORANGE, nil, 2), nil, profileID)
-  v2D:addText("Max points and heights", helper.getTextDeco(20, 65, 6), nil, profileID)
-  v2D:addText("height= "..helper.round(height1).." mm", helper.getTextDeco(maxPoint:getX(), maxPoint:getY(), 3), nil, profileID)
-  v2D:addText("height= "..helper.round(height2).." mm", helper.getTextDeco(maxPoint2:getX(), maxPoint2:getY(), 3), nil, profileID)
+  grDec:setTitle('Max points and heights')
+  v2D:addProfile(frameProfile, grDec)
+  v2D:addShape(maxPoint, helper.getDeco(ORANGE, nil, 2))
+  v2D:addShape(maxPoint2, helper.getDeco(ORANGE, nil, 2))
+  v2D:addShape(height1Line, helper.getDeco(RED, 0.5))
+  v2D:addShape(height2Line, helper.getDeco(RED, 0.5))
+  v2D:addShape(minPoint1, helper.getDeco(ORANGE, nil, 2))
+  v2D:addShape(minPoint2, helper.getDeco(ORANGE, nil, 2))
+  v2D:addText("height= "..helper.round(height1).." mm", helper.getTextDeco(maxPoint:getX()+2, maxPoint:getY(), 3))
+  v2D:addText("height= "..helper.round(height2).." mm", helper.getTextDeco(maxPoint2:getX()+2, maxPoint2:getY(), 3))
   v2D:present()
   Script.sleep(DELAY)
 
   v2D:clear()
-  profileID = v2D:addProfile(frameProfile, helper.getProfileDeco(BLUE))
-  v2D:addShape(hypoLine, helper.getDeco(RED, 0.5), nil, profileID)
-  v2D:addShape(cathLine, helper.getDeco(RED, 0.5), nil, profileID)
-  v2D:addText('Angle', helper.getTextDeco(20, 65, 6), nil, profileID)
-  v2D:addText("angle= "..helper.round(angle).." rad", helper.getTextDeco(40, 60, 3), nil, profileID)
+  grDec:setTitle('Angle= '..helper.round(angle)..' rad')
+  v2D:addProfile(frameProfile, grDec)
+  v2D:addShape(hypoLine, helper.getDeco(RED, 0.5))
+  v2D:addShape(cathLine, helper.getDeco(RED, 0.5))
   v2D:present()
   Script.sleep(DELAY)
   print('App finished.')

@@ -28,4 +28,4 @@ Tutorial "Algorithms - Profile - FirstSteps"
 
 ### Topics
 
-Algorithm, Profile, Sample, SICK-AppSpace
+algorithm, profile, sample, sick-appspace
